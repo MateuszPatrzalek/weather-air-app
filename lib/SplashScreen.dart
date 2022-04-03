@@ -13,7 +13,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     Future.delayed(
-        const Duration(seconds: 2),
+        Duration(seconds: 2),
         () => {
               if (havePermission())
                 {
@@ -33,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Stack(fit: StackFit.expand, children: <Widget>[
         Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
               color: Color(0xffffffff),
               gradient: LinearGradient(
                   begin: Alignment.centerRight,
@@ -45,8 +45,8 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Image(image: AssetImage('icons/cloud-sun.png')),
-              const Padding(padding: EdgeInsets.only(top: 15.0)),
+              Image(image: AssetImage('icons/cloud-sun.png')),
+              Padding(padding: EdgeInsets.only(top: 15.0)),
               Text(Strings.appTitle,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.lato(
@@ -55,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     fontSize: 42.0,
                     color: Colors.white,
                   ))),
-              const Padding(padding: EdgeInsets.only(top: 5.0)),
+              Padding(padding: EdgeInsets.only(top: 5.0)),
               Text(
                 'Aplikacja do monitorowania \n czystości powietrza',
                 textAlign: TextAlign.center,
