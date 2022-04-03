@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:weather_air_app/PermissionScreen.dart';
 import 'SplashScreen.dart';
 
 void main() {
@@ -16,7 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: PermissionScreen(),
+      home: SplashScreen(),
     );
   }
 }

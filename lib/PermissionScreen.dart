@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:weather_air_app/MyHomePage.dart';
 import 'package:weather_air_app/main.dart';
 
 class PermissionScreen extends StatefulWidget {
@@ -53,24 +54,29 @@ class _PermissionScreenState extends State<PermissionScreen> {
             bottom: 35,
             right: 0,
             child: Container(
-                alignment: Alignment.center,
-                margin: const EdgeInsets.only(left: 10, right: 10),
-                child: SizedBox(
+              alignment: Alignment.center,
+              margin: const EdgeInsets.only(left: 10, right: 10),
+              child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.white),
-                    padding: MaterialStateProperty.all(
-                      const EdgeInsets.only(top: 12, bottom: 12)
-                    )),
-                    onPressed: () {},
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Colors.white),
+                        padding: MaterialStateProperty.all(
+                            const EdgeInsets.only(top: 12, bottom: 12))),
+                    onPressed: () {
+                      //todo ask for perrmission
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MyHomePage()));
+                    },
                     child: const Text(
                       'Zgoda!',
                       style: TextStyle(fontSize: 16.0, color: Colors.black),
                     ),
                   )),
-                ))
+            ))
       ]),
     );
   }
