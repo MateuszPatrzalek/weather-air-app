@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:weather/weather.dart';
 import 'package:weather_air_app/MyHomePage.dart';
 import 'package:weather_air_app/PermissionScreen.dart';
 import 'package:weather_air_app/main.dart';
@@ -12,24 +16,6 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
-    Future.delayed(
-        Duration(seconds: 2),
-        () => {
-              if (havePermission())
-                {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => PermissionScreen()))
-                }
-              else
-                {
-                  //todo load data
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => MyHomePage()))
-                }
-            });
-
     return Scaffold(
       body: Stack(fit: StackFit.expand, children: <Widget>[
         Container(
@@ -87,7 +73,29 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  bool havePermission() {
-    return true;
+  @override
+  void initState() {
+    super.initState();
+    if (permissionDenied()) {
+      Navigator.push(this.context,
+          MaterialPageRoute(builder: (context) => PermissionScreen()));
+    } else {
+      SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
+        executeOnceAfterBuild();
+      });
+    }
+  }
+
+  bool permissionDenied() {
+    return false;
+  }
+
+  void executeOnceAfterBuild() async {
+    WeatherFactory wf = WeatherFactory("649e075312328b57d71a6696954078ae",
+        language: Language.POLISH);
+    Weather w = await wf.currentWeatherByCityName("Wrocław");
+    log(w.toJson().toString());
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => MyHomePage(weather: w)));
   }
 }

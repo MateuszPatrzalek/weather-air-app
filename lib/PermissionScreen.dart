@@ -66,10 +66,13 @@ class _PermissionScreenState extends State<PermissionScreen> {
                             const EdgeInsets.only(top: 12, bottom: 12))),
                     onPressed: () {
                       //todo ask for perrmission
+                      /*
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => MyHomePage()));
+
+                       */
                     },
                     child: const Text(
                       'Zgoda!',
