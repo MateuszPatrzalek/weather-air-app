@@ -14,7 +14,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var _currentIndex = 1;
+  var _currentIndex = 0;
   var screens;
 
   @override
@@ -42,11 +42,11 @@ class _MyHomePageState extends State<MyHomePage> {
         iconSize: 38,
         currentIndex: _currentIndex,
         onTap: (index) => setState(()=>_currentIndex = index),
-        items: const [
+        items: [
           BottomNavigationBarItem(
-              icon: Icon(Icons.air), label: "Powietrze"),
+              icon: Image.asset("icons/house.png"), label: "Powietrze", activeIcon: Image.asset("icons/house-checked.png")),
           BottomNavigationBarItem(
-              icon: Icon(Icons.wb_cloudy_outlined), label: "Pogoda")
+              icon: Image.asset("icons/cloud.png"), label: "Pogoda", activeIcon: Image.asset("icons/cloud-checked.png"))
         ],
       ),
     );
