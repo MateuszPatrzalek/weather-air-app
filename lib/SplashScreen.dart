@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:weather/weather.dart';
 import 'package:weather_air_app/MyHomePage.dart';
@@ -78,18 +80,20 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    if (permissionDenied()) {
-      Navigator.push(this.context,
-          MaterialPageRoute(builder: (context) => PermissionScreen()));
-    } else {
-      SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
-        executeOnceAfterBuild();
-      });
-    }
+    checkPermission();
   }
 
-  bool permissionDenied() {
-    return false;
+  checkPermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if(permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => PermissionScreen()));
+      } else {
+        SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
+          executeOnceAfterBuild();
+        });
+    }
   }
 
   void executeOnceAfterBuild() async {

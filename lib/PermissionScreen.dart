@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:weather_air_app/MyHomePage.dart';
+import 'package:weather_air_app/SplashScreen.dart';
 import 'package:weather_air_app/main.dart';
 
 class PermissionScreen extends StatefulWidget {
@@ -64,20 +65,21 @@ class _PermissionScreenState extends State<PermissionScreen> {
                             MaterialStateProperty.all<Color>(Colors.white),
                         padding: MaterialStateProperty.all(
                             const EdgeInsets.only(top: 12, bottom: 12))),
-                    onPressed: () {
-                      //todo ask for perrmission
-                      /*
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MyHomePage()));
-
-                       */
-                    },
                     child: const Text(
                       'Zgoda!',
                       style: TextStyle(fontSize: 16.0, color: Colors.black),
                     ),
+                    onPressed: () async {
+                      LocationPermission permission =
+                          await Geolocator.requestPermission();
+                      if (permission == LocationPermission.always ||
+                          permission == LocationPermission.whileInUse) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SplashScreen()));
+                      }
+                    },
                   )),
             ))
       ]),
