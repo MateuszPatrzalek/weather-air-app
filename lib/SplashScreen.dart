@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:weather/weather.dart';
 import 'package:weather_air_app/MyHomePage.dart';
 import 'package:weather_air_app/PermissionScreen.dart';
 import 'package:weather_air_app/main.dart';
+import 'package:http/http.dart' as http;
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -91,11 +93,68 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void executeOnceAfterBuild() async {
+    //weather api
     WeatherFactory wf = WeatherFactory("649e075312328b57d71a6696954078ae",
         language: Language.POLISH);
     Weather w = await wf.currentWeatherByCityName("Wrocław");
     log(w.toJson().toString());
+
+    //air api
+    String _endpoint = 'https://api.waqi.info/feed/';
+    var lat = '51.083930';
+    var lon = '17.051376';
+    var keyword = 'geo:$lat;$lon';
+    var key = '61a146e04c384b7f2844e99bd043bc9c96096b86';
+
+    String url = '$_endpoint/$keyword/?token=$key';
+
+    http.Response response = await http.get(Uri.parse(url));
+    log(response.body.toString());
+
+    Map<String, dynamic> jsonBody = json.decode(response.body);
+    AirQuality aq = AirQuality(jsonBody);
+
     Navigator.push(context,
-        MaterialPageRoute(builder: (context) => MyHomePage(weather: w)));
+        MaterialPageRoute(builder: (context) => MyHomePage(weather: w, air: aq)));
   }
+}
+
+class AirQuality{
+  bool isGood = false;
+  bool isBad = false;
+  String quality = '';
+  String advice = '';
+  int aqi = 0;
+  int pm25 = 0;
+  int pm10 = 0;
+  String station = '';
+
+  AirQuality(Map<String, dynamic> jsonBody){
+    aqi = int.tryParse(jsonBody['data']['aqi'].toString()) ??-1;
+    pm25 = int.tryParse(jsonBody['data']['iaqi']['pm25']['v'].toString()) ??-1;
+    if (jsonBody.containsKey('pm10')){
+      pm10 = int.tryParse(jsonBody['data']['iaqi']['pm10']['v'].toString()) ??-1;
+    }
+    else {
+      pm10 = 0;
+    }
+    station = jsonBody['data']['city']['name'].toString();
+    setupLevel(aqi);
+  }
+
+  void setupLevel(int aqi) {
+    if(aqi <= 100){
+      quality = "Bardzo dobra";
+      advice = "Skorzystaj z dobrego powietrza i wyjdź na spacer.";
+      isGood = true;
+    }else if(aqi <= 150){
+      quality = "Nie za dobra";
+      advice = "Jeśli tylko możesz zostań w domu.";
+      isBad = true;
+    }else{
+      quality = "Bardzo zła!";
+      advice = "Zdecydowanie zostań w domu!";
+    }
+  }
+
 }
