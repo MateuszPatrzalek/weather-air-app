@@ -85,28 +85,43 @@ class _SplashScreenState extends State<SplashScreen> {
 
   checkPermission() async {
     LocationPermission permission = await Geolocator.checkPermission();
-    if(permission == LocationPermission.denied ||
+    if (permission == LocationPermission.denied ||
         permission == LocationPermission.deniedForever) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => PermissionScreen()));
-      } else {
-        SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
-          executeOnceAfterBuild();
-        });
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => PermissionScreen()));
+    } else {
+      SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
+        executeOnceAfterBuild();
+      });
     }
   }
 
   void executeOnceAfterBuild() async {
+    Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.lowest,
+            forceAndroidLocationManager: true,
+            timeLimit: Duration(seconds: 5))
+        .then((value) => {loadLocationData(value)})
+        .onError((error, stackTrace) => {
+              Geolocator.getLastKnownPosition(forceAndroidLocationManager: true)
+                  .then((value) => {loadLocationData(value!)})
+            });
+  }
+
+  loadLocationData(Position value) async {
+    var lat = value.latitude;
+    var lon = value.longitude;
+    log(lat.toString() + 'x' + lon.toString());
+
     //weather api
     WeatherFactory wf = WeatherFactory("649e075312328b57d71a6696954078ae",
         language: Language.POLISH);
-    Weather w = await wf.currentWeatherByCityName("Wrocław");
+    Weather w = await wf.currentWeatherByLocation(lat, lon);
     log(w.toJson().toString());
 
     //air api
     String _endpoint = 'https://api.waqi.info/feed/';
-    var lat = '51.083930';
-    var lon = '17.051376';
+
     var keyword = 'geo:$lat;$lon';
     var key = '61a146e04c384b7f2844e99bd043bc9c96096b86';
 
@@ -118,12 +133,14 @@ class _SplashScreenState extends State<SplashScreen> {
     Map<String, dynamic> jsonBody = json.decode(response.body);
     AirQuality aq = AirQuality(jsonBody);
 
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => MyHomePage(weather: w, air: aq)));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => MyHomePage(weather: w, air: aq)));
   }
 }
 
-class AirQuality{
+class AirQuality {
   bool isGood = false;
   bool isBad = false;
   String quality = '';
@@ -135,30 +152,34 @@ class AirQuality{
 
   AirQuality(Map<String, dynamic> jsonBody){
     aqi = int.tryParse(jsonBody['data']['aqi'].toString()) ??-1;
-    pm25 = int.tryParse(jsonBody['data']['iaqi']['pm25']['v'].toString()) ??-1;
+    //pm25 = int.tryParse(jsonBody['data']['iaqi']['pm25']['v'].toString()) ??-1;
+    pm10 = int.tryParse(jsonBody['data']['iaqi']['pm10']['v'].toString()) ??-1;
+
+    pm25 = 0;
+    /*
     if (jsonBody.containsKey('pm10')){
-      pm10 = int.tryParse(jsonBody['data']['iaqi']['pm10']['v'].toString()) ??-1;
     }
     else {
       pm10 = 0;
     }
+
+     */
     station = jsonBody['data']['city']['name'].toString();
     setupLevel(aqi);
   }
 
   void setupLevel(int aqi) {
-    if(aqi <= 100){
+    if (aqi <= 100) {
       quality = "Bardzo dobra";
       advice = "Skorzystaj z dobrego powietrza i wyjdź na spacer.";
       isGood = true;
-    }else if(aqi <= 150){
+    } else if (aqi <= 150) {
       quality = "Nie za dobra";
       advice = "Jeśli tylko możesz zostań w domu.";
       isBad = true;
-    }else{
+    } else {
       quality = "Bardzo zła!";
       advice = "Zdecydowanie zostań w domu!";
     }
   }
-
 }
