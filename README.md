@@ -1,17 +1,5 @@
-# weather_air_app
+# Weather and air quality app
 
-Weather and air app.
+Flutter app using Weather API from Open Weather Map and Air Quality API from World Air Quality Index. App is using device GPS for track the localization. 
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-"# weather-air-app" 
+![weather](https://user-images.githubusercontent.com/36672872/170115787-7f9d16a3-5b8f-47df-9d54-37906448c435.gif)
